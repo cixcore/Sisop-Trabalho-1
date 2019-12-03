@@ -8,7 +8,7 @@
 
 //1 = Printa informacoes de criacao/troca de threads no terminal
 //0 = Nao printa nada
-#define DEBUG_MODE 0
+#define DEBUG_MODE 1
 
 int initied = 0;
 int nextTid = 0;
@@ -161,12 +161,12 @@ int ccreate (void* (*start)(void*), void *arg, int prio) {
 int cyield(void) {
 	FirstFila2(&fExec);
     	TCB_t* executando = ((TCB_t*) GetAtIteratorFila2(&fExec));
-	
+
 	if( executando != NULL) {
-		executando->prio = stopTimer();
+		executando->prio = stopTimer();	
 		executando->state = PROCST_APTO;
 		AppendFila2(&fApto, executando);
-		give_cpu_to_next();		
+		give_cpu_to_next();			
 	}
 
 	return 0;
@@ -322,9 +322,9 @@ int cwait(csem_t *sem) {
     if (sem->count <= 0)
     {
         if(DEBUG_MODE)
-            printf("Nao tem recurso no semaforo %p\n", sem);
-    
-        sem->count--; // decrementa count
+            printf("Nao tem recurso no semaforo %p\n", sem);	
+        
+	sem->count--; // decrementa count
         AppendFila2(&fBloq, executando); // coloca a thread em bloqueado
         AppendFila2((PFILA2)&(sem->fila), executando); // bota na fila pro recurso
         give_cpu_to_next();
@@ -349,7 +349,10 @@ int csignal(csem_t *sem) {
     if(DEBUG_MODE)
         printf("\033[0;33mEntrou no signal\n\033[0m");
 
+	
     sem->count++; // incrementa count
+	//printf("signal = %d\n", sem->count);
+	
     if (FirstFila2((PFILA2)&(sem->fila)) == 0) // se fila nao for vazia
     {
         if(DEBUG_MODE)

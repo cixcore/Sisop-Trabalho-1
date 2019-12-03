@@ -55,11 +55,13 @@ char		status[N*2]={'H',' ','H',' ',
                              'H','\0'};                      
  
 void sleepao(void){
-     int i = 0;
+     	int i = 0;
  
-     i = rand()%5 + 1;
-     for (; i<0; i--) cyield();
-     return;
+    	i = rand()%5 + 1;
+	for (; i<0; i--){ 
+		cyield();
+	}
+	return;
 }
 
 void	test(int i) 
@@ -77,6 +79,7 @@ void	test(int i)
 
 void	put_forks(int i) 
 {
+	printf("\n\n put forks \n");
 	cwait(&mutex);
 	state[i] = THINKING;
 	*(status+2*i) = 'T';
@@ -104,8 +107,8 @@ void	take_forks(int i)
 
  
 void	think_eat(void) 
-{
-	sleepao();
+{	
+	sleepao(); 	 
 	return;		
 }
 
@@ -120,7 +123,7 @@ void *Philosophers(void *arg) {
 		think_eat();        /* Philosophe goes to think          */
 		take_forks(i);      /* acquire two forks or blocks       */
 		think_eat();        /* Philosophe goes to eat            */
-		put_forks(i);       /* put back the forks                */	
+		put_forks(i);       /* put back the forks                */
 		End[i]=End[i]+1;	
 	}
 
@@ -168,7 +171,7 @@ int	main(int argc, char *argv[]) {
 
 	for(i = 0; i < N; i++)
 	   cjoin(ThreadId[i]);
-
+	
        cyield();
 
         printf("\n# Diner ends... All philosophers goes to sleep...\n\n\n");	
