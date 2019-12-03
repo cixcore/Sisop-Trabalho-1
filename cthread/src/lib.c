@@ -160,12 +160,14 @@ int ccreate (void* (*start)(void*), void *arg, int prio) {
 
 int cyield(void) {
 	FirstFila2(&fExec);
-    TCB_t* executando = ((TCB_t*) GetAtIteratorFila2(&fExec));
-
-	executando->prio = stopTimer();
-	executando->state = PROCST_APTO;
-	AppendFila2(&fApto, executando);
-	give_cpu_to_next();
+    	TCB_t* executando = ((TCB_t*) GetAtIteratorFila2(&fExec));
+	
+	if( executando != NULL) {
+		executando->prio = stopTimer();
+		executando->state = PROCST_APTO;
+		AppendFila2(&fApto, executando);
+		give_cpu_to_next();		
+	}
 
 	return 0;
 }

@@ -8,7 +8,7 @@
 
 //1 = Printa informacoes de criacao/troca de threads no terminal
 //0 = Nao printa nada
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
 
 int initied = 0;
 int nextTid = 0;
@@ -160,12 +160,14 @@ int ccreate (void* (*start)(void*), void *arg, int prio) {
 
 int cyield(void) {
 	FirstFila2(&fExec);
-    TCB_t* executando = ((TCB_t*) GetAtIteratorFila2(&fExec));
-
-	executando->prio = stopTimer();
-	executando->state = PROCST_APTO;
-	AppendFila2(&fApto, executando);
-	give_cpu_to_next();
+    	TCB_t* executando = ((TCB_t*) GetAtIteratorFila2(&fExec));
+	
+	if( executando != NULL)t {
+		executando->prio = stopTimer();
+		executando->state = PROCST_APTO;
+		AppendFila2(&fApto, executando);
+		give_cpu_to_next();		
+	}
 
 	return 0;
 }
