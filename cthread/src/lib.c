@@ -8,7 +8,7 @@
 
 //1 = Printa informacoes de criacao/troca de threads no terminal
 //0 = Nao printa nada
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
 
 int initied = 0;
 int nextTid = 0;
@@ -316,8 +316,10 @@ int cwait(csem_t *sem) {
     FirstFila2(&fExec);
     TCB_t* executando = ((TCB_t*) GetAtIteratorFila2(&fExec));
     
-    if(DEBUG_MODE)
+    if(DEBUG_MODE) {
             printf("\033[0;33mEntrou no wait\n\033[0m");
+	    printf("signal = %d\n", sem->count);
+    }
     
     if (sem->count <= 0)
     {
@@ -325,9 +327,12 @@ int cwait(csem_t *sem) {
             printf("Nao tem recurso no semaforo %p\n", sem);	
         
 	sem->count--; // decrementa count
-        AppendFila2(&fBloq, executando); // coloca a thread em bloqueado
-        AppendFila2((PFILA2)&(sem->fila), executando); // bota na fila pro recurso
-        give_cpu_to_next();
+
+	if( executando != NULL) {
+		AppendFila2(&fBloq, executando); // coloca a thread em bloqueado
+		AppendFila2((PFILA2)&(sem->fila), executando); // bota na fila pro recurso
+		give_cpu_to_next();			
+	}
         
         return 0;
     }
@@ -341,17 +346,19 @@ int cwait(csem_t *sem) {
         return 0;
     }
     
-	return -1;
+	return 0;
 }
 
 int csignal(csem_t *sem) {
 
-    if(DEBUG_MODE)
+    if(DEBUG_MODE) {
         printf("\033[0;33mEntrou no signal\n\033[0m");
+	printf("signal = %d\n", sem->count);
+    }
 
 	
     sem->count++; // incrementa count
-	//printf("signal = %d\n", sem->count);
+
 	
     if (FirstFila2((PFILA2)&(sem->fila)) == 0) // se fila nao for vazia
     {
@@ -369,7 +376,7 @@ int csignal(csem_t *sem) {
     
     // se for a thread executando que chamou ela continua
 
-	return -1;
+	return 0;
 }
 
 int cidentify (char *name, int size) {

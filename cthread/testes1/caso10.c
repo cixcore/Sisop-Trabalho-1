@@ -98,10 +98,16 @@ void	take_forks(int i)
 	cwait(&mutex);
 	state[i] = HUNGRY;
 	*(status+2*i) = 'H';
-	printf("%s \n", status);	
+	printf("%s \n", status);
+//printf("\nantes de chamar test[i] = %d\n", s[i].count);	
 	test(i);
+//printf("\ndepois de chamar test[i] = %d\n", s[i].count);
+//printf("\n\nantes do signal no mutex = %d\n", mutex.count);
 	csignal(&mutex);
-	cwait(&s[i]); 	
+//printf("\ndepois do signal no mutex = %d\n", mutex.count);
+//printf("\nantes do wait no s[i] = %d\n", s[i].count);
+	cwait(&s[i]);
+//printf("\ndepois do wait no s[i] = %d\n", s[i].count); 	
 	return;	
 }
 
@@ -121,9 +127,13 @@ void *Philosophers(void *arg) {
 		
 	while (End[i] < 5) {        /* eat five times then sleeps        */
 		think_eat();        /* Philosophe goes to think          */
+//printf("\n - - 0\n");
 		take_forks(i);      /* acquire two forks or blocks       */
+//printf("\n - - 1\n");
 		think_eat();        /* Philosophe goes to eat            */
+//printf("\n - - 2\n");
 		put_forks(i);       /* put back the forks                */
+//printf("\n - - 3\n");
 		End[i]=End[i]+1;	
 	}
 
